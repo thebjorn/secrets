@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Seeqret docs</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fontawesome.min.css" rel="stylesheet">
+        <link href="css/brands.min.css" rel="stylesheet">
+        <link href="css/solid.min.css" rel="stylesheet">
+        <link href="css/v4-font-face.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">Seeqret docs</a>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#seeqret-safely-transferring-code-secrets" class="nav-link">Seeqret: Safely transferring code secrets</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#introduction" class="nav-link">Introduction</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#assumptions" class="nav-link">Assumptions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#minimum-requirements" class="nav-link">Minimum Requirements</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#use-cases" class="nav-link">Use cases</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="1"><a href="#code" class="nav-link">Code</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p><a href="https://codecov.io/gh/thebjorn/seeqret"><img alt="codecov" src="https://codecov.io/gh/thebjorn/seeqret/graph/badge.svg?token=5PQOZLTSYD" /></a></p>
+<p><img alt="codecov" src="https://codecov.io/gh/thebjorn/seeqret/graphs/sunburst.svg?token=5PQOZLTSYD" /></p>
+<h1 id="seeqret-safely-transferring-code-secrets">Seeqret: Safely transferring code secrets</h1>
+<p>(very much a work in progress)</p>
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+<ul>
+<li><a href="#seeqret-safely-transferring-code-secrets">Seeqret: Safely transferring code secrets</a></li>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#prior-art">Prior art...</a></li>
+</ul>
+</li>
+<li><a href="#assumptions">Assumptions</a></li>
+<li><a href="#minimum-requirements">Minimum Requirements</a></li>
+<li><a href="#use-cases">Use cases</a></li>
+<li><a href="#code">Code</a></li>
+</ul>
+<!-- /code_chunk_output -->
+
+<h2 id="introduction">Introduction</h2>
+<p>How do you communicate the set of secrets (passwords, API keys, etc.) that your code needs to run? You can't just write them in the code, because that would expose them to anyone who can read the code. You can't just send them in an email, because that would expose them to anyone who can read your email. You can't just write them on a sticky note, because that would expose them to anyone who can read your sticky note.</p>
+<h3 id="prior-art">Prior art...</h3>
+<p>There are many ways to store and use secrets, e.g.:</p>
+<ul>
+<li>
+<p><strong>Environment variables</strong>: It is popular, in e.g. kubernetes and javascript, to read secrets from environment variables. For development these are stored in .env files that are not checked into git/svn. These files contain the secrets in plain-text. Transferring secrets to a new server/devloper is a manual process where you create a new file and somehow get access to the secrets.</p>
+</li>
+<li>
+<p><strong>Key vaults</strong>: E.g. Secureden or HashiCorp Vault (can be self hosted). These are usually expensive or complex to set up - or both. Key vaults usually have an API that you can use to get the secrets (setting this up is also expensive/complex/both).</p>
+</li>
+<li>
+<p><strong>Secret management services</strong>: These are hosted key vaults, e.g. AWS Secrets Manager, Google Secret manager, Azure Key Vault, or hosted HashiCorp Vault. There is always an associated api to read the secrets. This can incur significant costs for large numbers of secrets and/or high usage.</p>
+</li>
+<li>
+<p><strong>Encrypted files</strong>: This is usually a key/value file (.json/.yaml), where only the values are encrypted (e.g. <a href="https://github.com/getsops/sops">SOPS</a>. Every developer must have the same key to be able to use the file, but the file can be stored in git/svn.</p>
+</li>
+</ul>
+<h2 id="assumptions">Assumptions</h2>
+<p>You can make the following assumptions:</p>
+<ul>
+<li>https is secure</li>
+<li>the encryption algorithms are secure</li>
+<li>encrypted directories (Windows) are secure
+  <code>bat
+  attrib +I %1
+  icacls %1 /grant %USERDOMAIN%\%USERNAME%:(F) /T
+  icacls %1 /inheritance:r
+  cipher /e %1</code></li>
+<li><a href="https://help.ubuntu.com/community/EncryptedPrivateDirectory">encrypted private directories</a> (Ubuntu) are secure.</li>
+<li><code>0600</code> (read/write by owner only) directories (linux) are safe provided the user is not compromised.</li>
+</ul>
+<h2 id="minimum-requirements">Minimum Requirements</h2>
+<ol>
+<li>different users/systems should have access to different subsets of the secrets.</li>
+<li>the secrets should not exist in plain-text when they are not used (e.g. a
+   database password is only <em>used</em> when logging into the database - it shouldn't exist in memory outside of this process[^3]).</li>
+<li>a subset of secrets needs to be <strong>shared with new developers</strong> in a secure way.</li>
+<li>there should be a command line utility (<code>secrets</code>) to</li>
+<li><code>secrets set &lt;key&gt; &lt;value&gt;</code>: set a secret</li>
+<li><code>secrets get &lt;key&gt;</code>: get a secret</li>
+<li><code>secrets export &lt;user&gt; &lt;keys..&gt;</code> export a subset of the secrets for transmission (e.g. by email) to a new developer</li>
+<li><code>secrets import &lt;keys..&gt;</code> import keys received by e.g. email</li>
+<li>and a library/API to</li>
+<li><code>secrets.get(key)</code>: get a secret (this should be a fast O(1) operation)</li>
+<li>the secrets should be easy to update[^1].</li>
+<li>it should be possible to backup the secrets.</li>
+<li><em>(bonus)</em>: the secrets should be easy to rotate[^2].</li>
+<li><em>(bonus)</em>: the secrets should be auditable[^4].</li>
+</ol>
+<h1 id="use-cases">Use cases</h1>
+<ol>
+<li><strong>Starting from scratch:</strong> How do you set up the secrets system?</li>
+<li><strong>Inviting users:</strong> How do you invite users and how do you communicate the secrets to them?</li>
+<li><strong>Adding a secret:</strong> How do you communicate a new secret to the users?</li>
+<li><strong>Updating a secret:</strong> How do you communicate an update to a secret?</li>
+<li><strong>New user:</strong> How does a new user get access to the secrets?</li>
+<li><strong>Backup:</strong> How do you backup the secrets and what is needed to restore the backup?</li>
+<li><strong>Developer leaves:</strong> How do you revoke access to the secrets for a developer that leaves?</li>
+</ol>
+<h1 id="code">Code</h1>
+<p>The code in the <code>filecrypt.py</code> file is from <a href="https://www.youtube.com/watch?v=bd5nsMscPo0">Asymetric Encryption</a> which is well worth watching...</p>
+<p>The code in <code>pgp_filecrypt.py</code> contains the code needed to do pgp encryption/decryption (here you need to set the trust level when importing keys to the people you want to send encrypted messages to).</p>
+<p>[^1]: Updating means manually changing the secret (both in the storage and the service it protects), e.g. when a password expires/is compromised/a devloper leaves/etc.</p>
+<p>[^2]: Rotation is the process of periodically updating a secret. Ideally this
+is an automatic process that e.g. changes both the secret storage and the
+service it protects.</p>
+<p>[^3]: This is a defense-in-depth measure (in case the sanitizer fails to remove the secret from any traceback/logs/etc.)</p>
+<p>[^4]: Auditing means checking who has access to the secrets, which secrets were accessed, and when.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js"></script>
+        <script src="search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2024-12-01 17:03:14.387601+00:00
+-->
